@@ -1,8 +1,6 @@
 package com.endersuite.libcore.strfmt;
 
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,7 +15,6 @@ import java.util.Collection;
  *      {prefix}
  *
  */
-@Log4j
 public class StrFmt {
 
     // ======================   VARS
@@ -26,6 +23,11 @@ public class StrFmt {
      * Global prefix used in every StrFmt instance. Should be set at plugin start!
      */
     public static String prefix = "";
+
+    /**
+     * Global output level used in every StrFmt instance. Any output call with level lower than this will be voided.
+     */
+    public static Level outputLevel = Level.INFO;
 
     /**
      * The original raw string passed into the constructor.
@@ -94,13 +96,15 @@ public class StrFmt {
     public StrFmt fmtLevel() {
 
         String levelStr;
-        if (Level.TRACE.equals(this.level)) levelStr = "§8TRACE§R";
-        else if (Level.DEBUG.equals(this.level)) levelStr = "§7§lDEBUG§R";
-        else if (Level.INFO.equals(this.level)) levelStr = "§3§lINFO§R";
-        else if (Level.WARN.equals(this.level)) levelStr = "§e§lWARN§R";
-        else if (Level.ERROR.equals(this.level)) levelStr = "§c§lERROR§R";
-        else if (Level.FATAL.equals(this.level)) levelStr = "§4§lFATAL§R";
-        else levelStr = "";
+        switch (getLevel()) {
+            case TRACE: levelStr    = "§8TRACE§R"; break;
+            case DEBUG: levelStr    = "§7§lDEBUG§R"; break;
+            case INFO: levelStr     = "§3§lINFO§R"; break;
+            case WARN: levelStr     = "§e§lWARN§R"; break;
+            case ERROR: levelStr    = "§c§lERROR§R"; break;
+            case FATAL: levelStr    = "§4§lFATAL§R"; break;
+            default: levelStr       = ""; break;
+        }
 
         return replaceAll("\\{level}", levelStr);
     }
@@ -156,7 +160,7 @@ public class StrFmt {
     public StrFmt toConsole() {
 
         // RET: Log level to low!
-        if (log.getLevel().toInt() >= getLevel().toInt()) return this;
+        if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
 
         Bukkit.getConsoleSender().sendMessage(this.toString());
         return this;
@@ -172,8 +176,11 @@ public class StrFmt {
      *          StrFmt instance for chaining possibility
      */
     public StrFmt toPlayer(Player player) {
-        if (log.getLevel().toInt() <= getLevel().toInt())
-            player.sendRawMessage(this.toString());
+
+        // RET: Log level to low!
+        if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
+
+        player.sendRawMessage(this.toString());
         return this;
     }
 
@@ -185,7 +192,7 @@ public class StrFmt {
     public StrFmt toPlayerBroadcast() {
 
         // RET: Log level to low!
-        if (log.getLevel().toInt() >= getLevel().toInt()) return this;
+        if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
 
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(this.toString()));
         return this;
@@ -203,7 +210,7 @@ public class StrFmt {
     public StrFmt toPlayerBroadcast(Collection<Player> players) {
 
         // RET: Log level to low!
-        if (log.getLevel().toInt() >= getLevel().toInt()) return this;
+        if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
 
         players.forEach(p -> p.sendMessage(this.toString()));
         return this;
