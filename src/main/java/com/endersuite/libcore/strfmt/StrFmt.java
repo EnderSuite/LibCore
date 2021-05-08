@@ -2,6 +2,8 @@ package com.endersuite.libcore.strfmt;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -30,6 +32,11 @@ public class StrFmt {
      * Global output level used in every StrFmt instance. Any output call with level lower than this will be voided.
      */
     public static Level outputLevel = Level.INFO;
+
+    /**
+     * Global localization config that can be set to be used as the default in every StrFmt.
+     */
+    public static Configuration localizationConfig;
 
     /**
      * The original raw string passed into the constructor.
@@ -106,6 +113,36 @@ public class StrFmt {
         this.outputString = input;
         this.level = level;
         this.status = status;
+    }
+
+    /**
+     * Creates a new default string formatted using the provided path into the global localizationConfig as input.
+     *
+     * @param path
+     *          The path to the raw string inside the localizationConfig
+     * @return
+     *          The created StrFmt instance
+     */
+    public static StrFmt fromLocalized(String path) {
+        if (StrFmt.localizationConfig == null)
+            return new StrFmt("StrFmt.localizedConfig is null! Path: " + path);
+        else
+            return StrFmt.fromLocalized(StrFmt.localizationConfig, path);
+    }
+
+    /**
+     * Creates a new default string formatter using the provided path into the provided localizationConfig as input.
+     *
+     * @param localizationConfig
+     *          The config to pull the input string from
+     * @param path
+     *          The path at which the input string is located
+     * @return
+     *          The create StrFmt instance
+     */
+    public static StrFmt fromLocalized(Configuration localizationConfig, String path) {
+        String raw = localizationConfig.getString(path, "INVALID LOCAL PATH: " + path);
+        return new StrFmt(raw);
     }
 
 
