@@ -1,5 +1,6 @@
 package com.endersuite.libcore.strfmt;
 
+import com.endersuite.libcore.strfmt.ansii.AnsiiColor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
@@ -276,7 +277,7 @@ public class StrFmt {
         // RET: Log level to low!
         if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
 
-        Bukkit.getConsoleSender().sendMessage(this.toString());
+        Bukkit.getLogger().info(AnsiiColor.convert(this.toString()));
         return this;
 
     }
