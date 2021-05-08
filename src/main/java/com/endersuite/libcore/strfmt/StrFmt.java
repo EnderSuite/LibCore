@@ -10,9 +10,11 @@ import java.util.Collection;
  * Utility for constructing beautiful strings and sending them to the Bukkit console / players.
  *
  * Current supported placeholders:
- *      {level}
- *      {status}
- *      {prefix}
+ *      {level}             - The level of the StrFmt
+ *      {status}            - The status of the StrFmt
+ *      {prefix}            - The global prefix
+ *      {player.dName}      - The players display name
+ *      {player.name}       - The players name
  *
  */
 public class StrFmt {
@@ -44,7 +46,7 @@ public class StrFmt {
      * The status which can be displayed inside strings using the {status} placeholder.
      */
     @Getter
-    private Status status = Status.HIDDEN;
+    private Status status;
 
     /**
      * The level used to decide if a message is outputted. Also used by the {level} placeholder.
@@ -55,15 +57,66 @@ public class StrFmt {
 
     // ======================   CONSTRUCTOR
 
+    /**
+     * Creates a new string formatter using the default level (INFO) and status (HIDDEN).
+     *
+     * @param input
+     *          The raw input string
+     */
     public StrFmt(String input) {
+        this(input, Level.INFO, Status.HIDDEN);
+    }
+
+    /**
+     * Creates a new string formatter using the default status (HIDDEN).
+     *
+     * @param input
+     *          The raw input string
+     * @param level
+     *          The level to use for this string formatter
+     */
+    public StrFmt(String input, Level level) {
+        this(input, level, Status.HIDDEN);
+    }
+
+    /**
+     * Creates a new string formatter using the default level (INFO).
+     *
+     * @param input
+     *          The raw input string
+     * @param status
+     *          The status to use for this string formatter
+     */
+    public StrFmt(String input, Status status) {
+        this(input, Level.INFO, status);
+    }
+
+    /**
+     * Creates a new string formatter using the provided level & status.
+     *
+     * @param input
+     *          The raw input string
+     * @param level
+     *          The level to use
+     * @param status
+     *          The status to use
+     */
+    public StrFmt(String input, Level level, Status status) {
         this.rawString = input;
         this.outputString = input;
+        this.level = level;
+        this.status = status;
     }
+
 
     // ======================   JAVA INTERNAL
 
     @Override
     public String toString() {
+        fmtPrefix();
+        fmtLevel();
+        fmtStatus();
+        fmtColorCodes();
         return this.outputString;
     }
 
@@ -118,17 +171,33 @@ public class StrFmt {
 
         String statusChar;
         switch (status) {
-            case PROGRESS: statusChar = "§b§l...§R"; break;
-            case INFO: statusChar = "INFO"; break;           // TODO: Add info char (i)
-            case GOOD: statusChar = "§a§l✔§R"; break;
-            case BAD: statusChar = "§c§l✘§R"; break;
-            case ERR: statusChar = "§c§lERROR§R"; break;
-            case WARN: statusChar = "§e§lWARNING§R"; break;
-            default: statusChar = ""; break;
+            case PROGRESS: statusChar   = "§b§l...§R"; break;
+            case INFO: statusChar       = "INFO"; break;           // TODO: Add info char (i)
+            case GOOD: statusChar       = "§a§l✔§R"; break;
+            case BAD: statusChar        = "§c§l✘§R"; break;
+            case ERR: statusChar        = "§c§lERROR§R"; break;
+            case WARN: statusChar       = "§e§lWARNING§R"; break;
+            default: statusChar         = ""; break;
         }
 
         return replaceAll("\\{status}", statusChar);
 
+    }
+
+    /**
+     * Inserts:
+     *          player->displayname     at {player.dName}
+     *          player->name            at {player.name}
+     *
+     * @param player
+     *          The player used as data source
+     * @return
+     *          The StrFmt instance for chaining possibility
+     */
+    public StrFmt fmtPlayer(Player player) {
+        replaceAll("\\{player.dName}", player.getDisplayName());
+        replaceAll("\\{player.name}", player.getName());
+        return this;
     }
 
 
@@ -145,7 +214,7 @@ public class StrFmt {
      *          The StrFmt instance for chaining possibility
      */
     private StrFmt replaceAll(String regex, String replacement) {
-        this.outputString = getRawString().replaceAll(regex, replacement);
+        this.outputString = this.outputString.replaceAll(regex, replacement);
         return this;
     }
 
