@@ -149,6 +149,13 @@ public class StrFmt {
 
     // ======================   JAVA INTERNAL
 
+    /**
+     * Builds & Returns the formatted output string.
+     * Note: prefix, level, status & color code formatters are applied by default!
+     *
+     * @return
+     *          The formatted string
+     */
     @Override
     public String toString() {
         fmtPrefix();
@@ -323,6 +330,7 @@ public class StrFmt {
         return this;
 
     }
+
 
     // ======================   GETTER & SETTER
 
