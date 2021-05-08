@@ -220,11 +220,8 @@ public class StrFmt {
         String statusChar;
         switch (status) {
             case PROGRESS: statusChar   = "§b§l...§R"; break;
-            case INFO: statusChar       = "INFO"; break;           // TODO: Add info char (i)
             case GOOD: statusChar       = "§a§l✔§R"; break;
             case BAD: statusChar        = "§c§l✘§R"; break;
-            case ERR: statusChar        = "§c§lERROR§R"; break;
-            case WARN: statusChar       = "§e§lWARNING§R"; break;
             default: statusChar         = ""; break;
         }
 

@@ -9,9 +9,6 @@ package com.endersuite.libcore.strfmt;
 public enum Status {
     HIDDEN,
     PROGRESS,
-    INFO,
     GOOD,
     BAD,
-    ERR,
-    WARN
 }
