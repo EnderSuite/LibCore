@@ -1,5 +1,11 @@
 package com.endersuite.libcore.strfmt;
 
+/**
+ * Log level used in StrFmt.
+ *
+ * @author Maximilian Vincent Heidenreich
+ * @since 08.05.21
+ */
 public enum Level {
     TRACE("trace", 100),
     DEBUG("debug", 200),

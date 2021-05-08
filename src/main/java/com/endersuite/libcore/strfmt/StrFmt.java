@@ -20,6 +20,8 @@ import java.util.Collection;
  *      {player.dName}      - The players display name
  *      {player.name}       - The players name
  *
+ * @author Maximilian Vincent Heidenreich
+ * @since 08.05.21
  */
 public class StrFmt {
 

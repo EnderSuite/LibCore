@@ -5,6 +5,12 @@ import org.fusesource.jansi.Ansi;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * TODO: Add docs
+ *
+ * @author TheRealDomm
+ * @since 08.05.21
+ */
 public class AnsiiColor {
 
     private static final Map<Color, String> COLOR_STRING_MAP = new EnumMap<Color, String>(Color.class) {{

@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * TODO: Add docs
+ *
+ * @author TheRealDomm
+ * @since 08.05.21
+ */
 public enum Color {
 
     BLACK('0', "black"),
