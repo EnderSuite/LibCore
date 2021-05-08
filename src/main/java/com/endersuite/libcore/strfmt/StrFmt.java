@@ -3,13 +3,14 @@ package com.endersuite.libcore.strfmt;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
 /**
  * Utility for constructing beautiful strings and sending them to the Bukkit console / players.
+ * It also provides a convenient API to retrieve localized strings from a configuration file.
+ *      See: {@link StrFmt#fromLocalized(String)} / {@link StrFmt#fromLocalized(Configuration, String)}
  *
  * Current supported placeholders:
  *      {level}             - The level of the StrFmt
