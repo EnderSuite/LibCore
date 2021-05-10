@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author TheRealDomm
@@ -31,6 +32,9 @@ public class ClassPathInjector {
     public ClassPathInjector(File file, File target) {
         if (file == null || !file.exists() || target == null) {
             throw new IllegalArgumentException("File does not exist!");
+        }
+        if (!(ClassLoader.getSystemClassLoader() instanceof URLClassLoader)) {
+            throw new IllegalStateException("System class loader is no URLClassLoader");
         }
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -61,6 +65,9 @@ public class ClassPathInjector {
             throw new IllegalStateException("No file for injection found!");
         }
         for (File file : files) {
+            if (!file.getAbsolutePath().toLowerCase(Locale.ROOT).endsWith(".jar")) {
+                continue;
+            }
             try {
                 URL url = file.toURI().toURL();
                 Class[] parameters = new Class[]{URL.class};
