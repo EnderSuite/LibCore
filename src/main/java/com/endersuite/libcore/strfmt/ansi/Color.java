@@ -1,4 +1,4 @@
-package com.endersuite.libcore.strfmt.ansii;
+package com.endersuite.libcore.strfmt.ansi;
 
 import java.util.HashMap;
 import java.util.Map;
