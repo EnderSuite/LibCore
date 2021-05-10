@@ -22,7 +22,8 @@ import java.util.Locale;
  */
 public class ClassPathInjector {
 
-    private final List<String> urls = new ArrayList<>();
+    private final List<String> urls;
+    private final boolean replaceExisting;
 
     /**
      * default constructor for dependency injection
@@ -30,6 +31,8 @@ public class ClassPathInjector {
      * @param target the folder where libraries should be downloaded to
      */
     public ClassPathInjector(File file, File target) {
+        this.urls = new ArrayList<>();
+        this.replaceExisting = true;
         if (file == null || !file.exists() || target == null) {
             throw new IllegalArgumentException("File does not exist!");
         }
@@ -45,6 +48,15 @@ public class ClassPathInjector {
         } catch (IOException e) {
             throw new IllegalStateException("Could not load dependency file!");
         }
+        this.download(target);
+    }
+
+    public ClassPathInjector(List<String> urls, File target, boolean replaceExisting) {
+        if (!(ClassLoader.getSystemClassLoader() instanceof URLClassLoader)) {
+            throw new IllegalStateException("System class loader is no URLClassLoader");
+        }
+        this.urls = urls;
+        this.replaceExisting = replaceExisting;
         this.download(target);
     }
 
@@ -109,6 +121,9 @@ public class ClassPathInjector {
                 String[] strings = url.getPath().split("/");
                 String fileName = strings[strings.length-1];
                 File targetFile = new File(target, fileName);
+                if (targetFile.exists() && !this.replaceExisting) {
+                    continue;
+                }
                 Files.copy(url.openStream(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
