@@ -123,22 +123,15 @@ public class ConfigManager {
      *          The name of the configuration
      * @param path
      *          The path to the configuration file
+     * @param plugin
+     *          The {@link Plugin} used for resource extraction
      */
-    public void load(String name, String path, Plugin plugin) throws IOException {
+    public void load(String name, Path path, Plugin plugin) throws IOException {
 
-        Path configPath = Paths.get(path);
+        if (!path.toFile().exists())
+            ResourceUtil.extractResource(path.getFileName().toString(), path, plugin);
 
-        // Check if exists on disk
-        if (!configPath.toFile().exists()) {
-
-            @Cleanup InputStream resourceIStream = plugin.getResource(configPath.getFileName().toString());
-            if (resourceIStream != null) {
-                Files.copy(resourceIStream, configPath);
-            }
-
-        }
-
-        FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(configPath.toFile());
+        FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(path.toFile());
         getLoadedFileConfigurations().put(name, fileConfiguration);
 
     }
