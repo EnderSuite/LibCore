@@ -1,17 +1,24 @@
 package com.endersuite.libcore.inject.impl;
 
+import com.endersuite.libcore.strfmt.Level;
+import com.endersuite.libcore.strfmt.StrFmt;
+
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Locale;
 
 /**
+ * Provides functionality to inject dependencies into the class path & a downloads them
+ * from a specified URL list if tey are not already present locally
+ *
  * @author TheRealDomm
  * @since 10.05.2021
  */
@@ -27,17 +34,28 @@ public class ClassPathInjector implements Injector {
      */
 
     @Override
-    public boolean inject(File target, boolean stopOnError) {
+    public void inject(Path depsFolder) {
+        File target = depsFolder.toFile();
+
+        if (!target.exists()) {
+            throw new RuntimeException("Dependency folder at '" + target.getAbsolutePath() + "' does not exist!");
+        }
+
         File[] files = target.listFiles();
         if (files == null) {
-            System.err.println("No file for injection found!");
-            return false;
+            new StrFmt("{prefix} Tried to inject but found no dependencies to inject!").setLevel(Level.WARN).toConsole();
+            return;
         }
+
         for (File file : files) {
             if (!file.getAbsolutePath().toLowerCase(Locale.ROOT).endsWith(".jar")) {
-                System.err.println("The file '" + file.getAbsolutePath() + "' is not a jar file!");
+                new StrFmt("{prefix} File in deps folder '§e" + file.getName() + "§r' is no jar file! Skipping it!")
+                        .setLevel(Level.WARN).toConsole();
                 continue;
             }
+
+            new StrFmt("{prefix} Injecting '§e" + file.getName() + "§r'").setLevel(Level.DEBUG).toConsole();
+
             try {
                 ClassLoader classLoader = ClassLoader.getSystemClassLoader();
                 Field field = classLoader.getClass().getDeclaredField("ucp");
@@ -49,31 +67,26 @@ public class ClassPathInjector implements Injector {
                 addFile.invoke(urlClassPathObject, file.getAbsolutePath());
             } catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException |
                     IllegalAccessException | ClassNotFoundException e) {
-                System.err.println("Error while injecting '" + file.getAbsolutePath() + "'");
-                System.err.println(e);
-                if (stopOnError) {
-                    e.printStackTrace();
-                    return false;
-                }
+                throw new RuntimeException("Exception while injecting '" + file.getName() + "'!", e);
             }
         }
-        return false;
     }
 
     @Override
-    public boolean download(InputStream urlTextStream, File target, boolean keepExisting) {
-        return Downloader.download(urlTextStream, target, keepExisting);
+    public void download(InputStream urlTextStream, Path targetFolder, boolean keepExisting) {
+        Downloader.download(urlTextStream, targetFolder, keepExisting);
     }
 
     @Override
-    public boolean download(File urlFile, File target, boolean keepExisting) {
-        return Downloader.download(urlFile, target, keepExisting);
+    public void download(File urlFile, Path targetFolder, boolean keepExisting) {
+        Downloader.download(urlFile, targetFolder, keepExisting);
     }
 
     @Override
-    public boolean download(List<String> urls, File target, boolean keepExisting) {
-        return Downloader.download(urls, target, keepExisting);
+    public void download(List<String> urls, Path targetFolder, boolean keepExisting) {
+        Downloader.download(urls, targetFolder, keepExisting);
     }
+
 
     private void setAccessible(AccessibleObject accessibleObject, boolean accessible) {
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
