@@ -28,20 +28,28 @@ public class InjectorBootstrap {
             throw new RuntimeException("Running currently unsupported java version '" + version + "'");
         }
         System.out.println("Running injector for java '" + found.getVersion() + "'");
+        if (found.isUnsafe()) {
+            System.out.println("We've detected you are running java version '" + version + "', " +
+                    "this version is only barely tested with our framework..., bugs may occur!");
+            System.out.println("To ensure full stability with this framework please use any version from 8 to 11");
+        }
         this.injector = found.equals(JavaVersion.JAVA_8) ? new LegacyClassPathInjector() : new ClassPathInjector();
     }
 
     private enum JavaVersion {
-        JAVA_8("1.8"),
-        JAVA_9("9.0"),
-        JAVA_10("10.0"),
-        JAVA_11("11.0");
+        JAVA_8("1.8", false),
+        JAVA_9("9.0", false),
+        JAVA_10("10.0", false),
+        JAVA_11("11.0", false),
+        JAVA_12("12.0", true),
+        JAVA_13("13.0", true);
 
-        @Getter
-        private final String version;
+        @Getter private final String version;
+        @Getter private final boolean unsafe;
 
-        JavaVersion(String version) {
+        JavaVersion(String version, boolean unsafe) {
             this.version = version;
+            this.unsafe = unsafe;
         }
 
     }

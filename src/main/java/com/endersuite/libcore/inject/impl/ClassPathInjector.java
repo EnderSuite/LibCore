@@ -25,10 +25,6 @@ public class ClassPathInjector implements Injector {
      *
      */
 
-    public ClassPathInjector() {
-
-    }
-
     @Override
     public boolean inject(File target, boolean stopOnError) {
         File[] files = target.listFiles();
