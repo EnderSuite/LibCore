@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -142,4 +143,9 @@ public abstract class EnderPlugin implements Plugin {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return null;
     }
+
+    public PluginCommand getCommand(String name) {
+        return this.plugin.getCommand(name);
+    }
+
 }

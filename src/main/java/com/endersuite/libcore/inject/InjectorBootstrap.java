@@ -5,8 +5,6 @@ import com.endersuite.libcore.inject.impl.Injector;
 import com.endersuite.libcore.inject.impl.LegacyClassPathInjector;
 import lombok.Getter;
 
-import java.util.Locale;
-
 /**
  * @author TheRealDomm
  * @since 10.05.2021
