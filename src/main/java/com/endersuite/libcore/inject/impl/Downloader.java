@@ -2,15 +2,12 @@ package com.endersuite.libcore.inject.impl;
 
 import com.endersuite.libcore.strfmt.Level;
 import com.endersuite.libcore.strfmt.StrFmt;
-import lombok.Cleanup;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,31 +21,55 @@ import java.util.List;
 public class Downloader {
 
     /**
+     * Downloads files from urls specified in the urlTextStream.
+     *
+     * @param urlTextStream
+     *          The stream containing the urls (newline separated)
+     * @param targetFolder
+     *          The folder inside which the downloaded files will be saved
+     * @param override
+     *          Whether to override existing files
+     * @return
+     *          {@code true} if everything was downloaded | {@code false} if not
+     */
+    public static void download(InputStream urlTextStream, Path targetFolder, boolean override) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(urlTextStream));
+        List<String> urls = new ArrayList<>();
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                urls.add(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read urls from stream!", e);
+        }
+        download(urls, targetFolder, override);
+    }
+
+    /**
      * Downloads files from urls specified in the urlFile.
      *
      * @param urlFile
      *          The file containing the urls (newline separated)
      * @param targetFolder
      *          The folder inside which the downloaded files will be saved
-     * @param keepExisting
+     * @param override
      *          Whether to override existing files
      * @return
      *          {@code true} if everything was downloaded | {@code false} if not
      */
-    public static boolean download(File urlFile, File targetFolder, boolean keepExisting) {
-
-        // Extract urls
+    public static void download(File urlFile, Path targetFolder, boolean override) {
         List<String> urls = new ArrayList<>();
         try {
-            @Cleanup BufferedReader reader = new BufferedReader(new FileReader(urlFile));
+            BufferedReader reader = new BufferedReader(new FileReader(urlFile));
             String url;
-            while ((url = reader.readLine()) != null) urls.add(url);
+            while ((url = reader.readLine()) != null) {
+                urls.add(url);
+            }
         } catch (IOException e) {
-            System.err.println("Could not extract urls from dependency urls file!");
-            return false;
+            throw new RuntimeException("Could not read urls from file at '" + urlFile.getAbsolutePath() + "'!", e);
         }
-
-        return download(urls, targetFolder, keepExisting);
+        download(urls, targetFolder, override);
     }
 
     /**
@@ -58,27 +79,34 @@ public class Downloader {
      *          The list containing urls to jar files
      * @param targetFolder
      *          The folder inside which the downloaded files will be saved
-     * @param keepExisting
+     * @param override
      *          Whether to override existing files
      * @return
      *          {@code true} if everything was downloaded | {@code false} if not
      */
-    public static boolean download(List<String> urls, File targetFolder, boolean keepExisting) {
-        if (!targetFolder.exists() && !targetFolder.mkdir()) {
-            System.err.println("Could not create folder to download dependencies into!");
-            return false;
+    public static void download(List<String> urls, Path targetFolder, boolean override) {
+        File target = targetFolder.toFile();
+
+        if (!target.exists()) {
+            if (!target.mkdir())
+                throw new RuntimeException("Could not create download target folder!");
+        }
+        else if (!target.isDirectory()) {
+            throw new RuntimeException("Target at '" + target.getAbsolutePath() + "' exists but is a file (Should be a directory)!");
         }
 
         try {
             for (String urlStr : urls) {
-                if (urlStr.isEmpty()) continue;
+                if (urlStr.isEmpty()) {
+                    continue;
+                }
                 URL url = new URL(urlStr);
                 String[] strings = url.getPath().split("/");
                 String fileName = strings[strings.length-1];
-                File targetFile = new File(targetFolder, fileName);
+                File targetFile = new File(target, fileName);
 
-                if (targetFile.exists() && !keepExisting) {
-                    new StrFmt("{prefix} Remote dependency '" + urlStr + "' already exists at '" + targetFile.getAbsolutePath() + "'! Skipping it!")
+                if (targetFile.exists() && !override) {
+                    new StrFmt("{prefix} Remote dependency '§e" + urlStr + "§r' already downloaded to '§e" + targetFile.getAbsolutePath() + "§r'! Skipping it!")
                             .setLevel(Level.DEBUG).toConsole();
                     continue;
                 }
@@ -87,20 +115,18 @@ public class Downloader {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("HEAD");
                 if (!connection.getHeaderField("Content-Type").equals("application/java-archive")) {
-                    new StrFmt("{prefix} Dependency source at '" + urlStr + "' is no java-archive! Skipping it!")
+                    new StrFmt("{prefix} Dependency source at '§e" + urlStr + "§r' is no java-archive! Skipping it!")
                             .setLevel(Level.WARN).toConsole();
                     continue;
                 }
 
                 // Perform download
-                new StrFmt("{prefix} Pulling remote dependency '" + urlStr + "'").setLevel(Level.DEBUG).toConsole();
+                new StrFmt("{prefix} Pulling remote dependency '§e" + urlStr + "§r'").setLevel(Level.DEBUG).toConsole();
                 Files.copy(url.openStream(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            System.err.println("Could not successfully download necessary dependencies!");
-            return false;
+            throw new RuntimeException("Could not successfully download all dependencies!", e);
         }
-        return true;
     }
 
 }

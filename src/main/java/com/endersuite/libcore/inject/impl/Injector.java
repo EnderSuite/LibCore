@@ -1,6 +1,8 @@
 package com.endersuite.libcore.inject.impl;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -14,39 +16,51 @@ public interface Injector {
      *
      * @param depsFolder
      *          The folder containing the jar files
-     * @param stopOnError
-     *          Whether to stop injecting on error
      * @return
      *          {@code true} if all files were injected successfully | {@code false} if not
      */
-    boolean inject(File depsFolder, boolean stopOnError);
+    void inject(Path depsFolder);
+
+    /**
+     * Downloads files from urls specified in the urlTextStream.
+     *
+     * @param urlTextStream
+     *          The stream containing the urls (newline separated)
+     * @param targetFolder
+     *          The folder inside which the downloaded files will be saved
+     * @param override
+     *          Whether to override existing files
+     * @return
+     *          {@code true} if everything was downloaded | {@code false} if not
+     */
+    void download(InputStream urlTextStream, Path targetFolder, boolean override);
 
     /**
      * Downloads dependencies from url inside a file (newline separated).
      *
      * @param urlFile
      *          The file inside which the urls are stored
-     * @param depsFolder
+     * @param targetFolder
      *          THe folder in which to save the downloaded files
-     * @param keepExisting
+     * @param override
      *          Whether to overwrite existing files
      * @return
      *          {@code true} if everything succeeded | {@code false} if there was an exception
      */
-    boolean download(File urlFile, File depsFolder, boolean keepExisting);
+    void download(File urlFile, Path targetFolder, boolean override);
 
     /**
      * Downloads dependencies from url list.
      *
      * @param urls
      *          The urls at which the jar file are located
-     * @param depsFolder
+     * @param targetFolder
      *          THe folder in which to save the downloaded files
-     * @param keepExisting
+     * @param override
      *          Whether to overwrite existing files
      * @return
      *          {@code true} if everything succeeded | {@code false} if there was an exception
      */
-    boolean download(List<String> urls, File depsFolder, boolean keepExisting);
+    void download(List<String> urls, Path targetFolder, boolean override);
 
 }
