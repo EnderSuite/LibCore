@@ -26,112 +26,109 @@ import java.util.logging.Logger;
  */
 public abstract class EnderPlugin implements Plugin {
 
-    @Getter private final JavaPlugin plugin;
-    @Getter private final Injector injector;
+    @Getter
+    private final PluginBootstrap bootstrap;
 
-    public EnderPlugin(PluginBootstrap plugin) {
-        this.plugin = plugin;
-        this.injector = plugin.getInjector();
+    @Getter
+    private final Injector injector;
+
+    public EnderPlugin(PluginBootstrap bootstrap) {
+        this.bootstrap = bootstrap;
+        this.injector = bootstrap.getInjector();
     }
 
     @Override
     public File getDataFolder() {
-        return this.plugin.getDataFolder();
+        return bootstrap.getDataFolder();
     }
 
     @Override
     public PluginDescriptionFile getDescription() {
-        return this.plugin.getDescription();
+        return bootstrap.getDescription();
     }
 
     @Override
     public FileConfiguration getConfig() {
-        return this.plugin.getConfig();
+        return bootstrap.getConfig();
     }
 
     @Override
     public InputStream getResource(String filename) {
-        return this.plugin.getResource(filename);
+        return bootstrap.getResource(filename);
     }
 
     @Override
     public void saveConfig() {
-        this.plugin.saveConfig();
+        bootstrap.saveConfig();
     }
 
     @Override
     public void saveDefaultConfig() {
-        this.plugin.saveDefaultConfig();
+        bootstrap.saveDefaultConfig();
     }
 
     @Override
     public void saveResource(String resourcePath, boolean replace) {
-        this.plugin.saveResource(resourcePath, replace);
+        bootstrap.saveResource(resourcePath, replace);
     }
 
     @Override
     public void reloadConfig() {
-        this.plugin.reloadConfig();
+        bootstrap.reloadConfig();
     }
 
     @Override
     public PluginLoader getPluginLoader() {
-        return this.plugin.getPluginLoader();
+        return bootstrap.getPluginLoader();
     }
 
     @Override
     public Server getServer() {
-        return this.plugin.getServer();
+        return bootstrap.getServer();
     }
 
     @Override
     public boolean isEnabled() {
-        return this.plugin.isEnabled();
+        return bootstrap.isEnabled();
     }
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 
     @Override
-    public void onLoad() {
-
-    }
+    public void onLoad() { }
 
     @Override
-    public void onEnable() {
-
-    }
+    public void onEnable() { }
 
     @Override
     public boolean isNaggable() {
-        return this.plugin.isNaggable();
+        return bootstrap.isNaggable();
     }
 
     @Override
     public void setNaggable(boolean canNag) {
-        this.plugin.setNaggable(canNag);
+        bootstrap.setNaggable(canNag);
     }
 
     @Override
     public EbeanServer getDatabase() {
-        return this.plugin.getDatabase();
+        return bootstrap.getDatabase();
     }
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
-        return this.plugin.getDefaultWorldGenerator(worldName, id);
+        return bootstrap.getDefaultWorldGenerator(worldName, id);
     }
 
     @Override
     public Logger getLogger() {
-        return this.plugin.getLogger();
+        return bootstrap.getLogger();
     }
 
     @Override
     public String getName() {
-        return this.plugin.getName();
+        return bootstrap.getName();
     }
 
     @Override
@@ -145,7 +142,7 @@ public abstract class EnderPlugin implements Plugin {
     }
 
     public PluginCommand getCommand(String name) {
-        return this.plugin.getCommand(name);
+        return bootstrap.getCommand(name);
     }
 
 }
