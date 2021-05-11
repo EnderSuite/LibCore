@@ -1,6 +1,4 @@
-package com.endersuite.libcore.strfmt.ansii;
-
-import org.fusesource.jansi.Ansi;
+package com.endersuite.libcore.strfmt.ansi;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -11,7 +9,7 @@ import java.util.Map;
  * @author TheRealDomm
  * @since 08.05.21
  */
-public class AnsiiColor {
+public class AnsiColor {
 
     private static final Map<Color, String> COLOR_STRING_MAP = new EnumMap<Color, String>(Color.class) {{
         put(Color.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
