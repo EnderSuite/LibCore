@@ -5,15 +5,16 @@ import com.endersuite.libcore.inject.impl.Injector;
 import com.endersuite.libcore.inject.impl.LegacyClassPathInjector;
 import lombok.Getter;
 
-import java.util.Locale;
-
 /**
+ * Bootstraps a project by setting up the {@link Injector} depending on the Java version.
+ *
  * @author TheRealDomm
  * @since 10.05.2021
  */
 public class InjectorBootstrap {
 
-    @Getter private final Injector injector;
+    @Getter
+    private final Injector injector;
 
     public InjectorBootstrap() {
         String version = System.getProperty("java.version");
@@ -24,10 +25,9 @@ public class InjectorBootstrap {
                 break;
             }
         }
-        if (found == null) {
-            throw new RuntimeException("Running currently unsupported java version '" + version + "'");
-        }
-        System.out.println("Running injector for java '" + found.getVersion() + "'");
+        if (found == null)
+            throw new RuntimeException("Unsupported java version '" + version + "'!");
+
         this.injector = found.equals(JavaVersion.JAVA_8) ? new LegacyClassPathInjector() : new ClassPathInjector();
     }
 
