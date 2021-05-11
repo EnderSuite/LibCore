@@ -1,6 +1,7 @@
 package com.endersuite.libcore.inject.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -10,6 +11,8 @@ import java.util.List;
 public interface Injector {
 
     boolean inject(File target, boolean stopOnError);
+
+    boolean download(InputStream urlTextStream, File target, boolean keepExisting);
 
     boolean download(File urlFile, File target, boolean keepExisting);
 

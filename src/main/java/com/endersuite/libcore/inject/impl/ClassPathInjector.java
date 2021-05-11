@@ -1,6 +1,7 @@
 package com.endersuite.libcore.inject.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -60,13 +61,18 @@ public class ClassPathInjector implements Injector {
     }
 
     @Override
+    public boolean download(InputStream urlTextStream, File target, boolean keepExisting) {
+        return Downloader.download(urlTextStream, target, keepExisting);
+    }
+
+    @Override
     public boolean download(File urlFile, File target, boolean keepExisting) {
-        return false;
+        return Downloader.download(urlFile, target, keepExisting);
     }
 
     @Override
     public boolean download(List<String> urls, File target, boolean keepExisting) {
-        return false;
+        return Downloader.download(urls, target, keepExisting);
     }
 
     private void setAccessible(AccessibleObject accessibleObject, boolean accessible) {

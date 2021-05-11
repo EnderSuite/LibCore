@@ -1,9 +1,6 @@
 package com.endersuite.libcore.inject.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -16,6 +13,20 @@ import java.util.List;
  * @since 10.05.2021
  */
 public class Downloader {
+
+    public static boolean download(InputStream urlTextStream, File target, boolean keepExisting) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(urlTextStream));
+        List<String> urls = new ArrayList<>();
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                urls.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return download(urls, target, keepExisting);
+    }
 
     public static boolean download(File urlFile, File target, boolean keepExisting) {
         List<String> urls = new ArrayList<>();

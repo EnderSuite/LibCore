@@ -1,18 +1,12 @@
 package com.endersuite.libcore.inject.impl;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,6 +58,11 @@ public class LegacyClassPathInjector implements Injector {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean download(InputStream urlTextStream, File target, boolean keepExisting) {
+        return Downloader.download(urlTextStream, target, keepExisting);
     }
 
     @Override

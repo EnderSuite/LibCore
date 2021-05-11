@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -18,45 +19,59 @@ import java.util.List;
 public abstract class PluginBootstrap extends JavaPlugin {
 
     @Getter private final Injector injector;
-    @Getter private final EnderPlugin enderPlugin;
+    @Getter private EnderPlugin enderPlugin;
 
-    private PluginBootstrap(Class<? extends EnderPlugin> enderPlugin) {
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin) {
         final InjectorBootstrap injectorBootstrap = new InjectorBootstrap();
         this.injector = injectorBootstrap.getInjector();
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, List<String> urls, File downloadDir,
+                           boolean keepExisting) {
+        this(enderPlugin, urls, downloadDir, keepExisting, false);
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, File urlFile, File downloadDir,
+                           boolean keepExisting) {
+        this(enderPlugin, urlFile, downloadDir, keepExisting, false);
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, InputStream inputStream, File downloadDir,
+                           boolean keepExisting) {
+        this(enderPlugin, inputStream, downloadDir, keepExisting, false);
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, List<String> urls, File downloadDir,
+                           boolean keepExisting, boolean stopOnError) {
+        this(enderPlugin);
+        this.injector.download(urls, downloadDir, keepExisting);
+        this.injector.inject(downloadDir, stopOnError);
+        this.loadPlugin(enderPlugin);
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, File urlFile, File downloadDir,
+                           boolean keepExisting, boolean stopOnError) {
+        this(enderPlugin);
+        this.injector.download(urlFile, downloadDir, keepExisting);
+        this.injector.inject(downloadDir, stopOnError);
+        this.loadPlugin(enderPlugin);
+    }
+
+    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, InputStream inputStream, File downloadDir,
+                           boolean keepExisting, boolean stopOnError) {
+        this(enderPlugin);
+        this.injector.download(inputStream, downloadDir, keepExisting);
+        this.injector.inject(downloadDir, stopOnError);
+        this.loadPlugin(enderPlugin);
+    }
+
+    public void loadPlugin(Class<? extends EnderPlugin> enderPlugin) {
         try {
-            Constructor<? extends EnderPlugin> constructor = enderPlugin.getDeclaredConstructor(JavaPlugin.class);
+            Constructor<? extends EnderPlugin> constructor = enderPlugin.getDeclaredConstructor(PluginBootstrap.class);
             this.enderPlugin = constructor.newInstance(this);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new IllegalStateException("Could not load enderplugin instance, wrong constructor?", e);
         }
-    }
-
-    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, List<String> urls, File downloadDir,
-                           boolean keepExisting) {
-        this(enderPlugin);
-        this.injector.download(urls, downloadDir, keepExisting);
-        this.injector.inject(downloadDir, false);
-    }
-
-    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, File urlFile, File downloadDir,
-                           boolean keepExisting) {
-        this(enderPlugin);
-        this.injector.download(urlFile, downloadDir, keepExisting);
-        this.injector.inject(downloadDir, false);
-    }
-
-    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, List<String> urls, File downloadDir,
-                           boolean keepExisting, boolean stopOnError) {
-        this(enderPlugin);
-        this.injector.download(urls, downloadDir, keepExisting);
-        this.injector.inject(downloadDir, stopOnError);
-    }
-
-    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, File urlFile, File downloadDir,
-                           boolean keepExisting, boolean stopOnError) {
-        this(enderPlugin);
-        this.injector.download(urlFile, downloadDir, keepExisting);
-        this.injector.inject(downloadDir, stopOnError);
     }
 
     @Override
