@@ -21,7 +21,7 @@ public abstract class PluginBootstrap extends JavaPlugin {
     @Getter private final Injector injector;
     @Getter private EnderPlugin enderPlugin;
 
-    public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin) {
+    public PluginBootstrap() {
         final InjectorBootstrap injectorBootstrap = new InjectorBootstrap();
         this.injector = injectorBootstrap.getInjector();
     }
@@ -43,7 +43,7 @@ public abstract class PluginBootstrap extends JavaPlugin {
 
     public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, List<String> urls, File downloadDir,
                            boolean keepExisting, boolean stopOnError) {
-        this(enderPlugin);
+        this();
         this.injector.download(urls, downloadDir, keepExisting);
         this.injector.inject(downloadDir, stopOnError);
         this.loadPlugin(enderPlugin);
@@ -51,7 +51,7 @@ public abstract class PluginBootstrap extends JavaPlugin {
 
     public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, File urlFile, File downloadDir,
                            boolean keepExisting, boolean stopOnError) {
-        this(enderPlugin);
+        this();
         this.injector.download(urlFile, downloadDir, keepExisting);
         this.injector.inject(downloadDir, stopOnError);
         this.loadPlugin(enderPlugin);
@@ -59,7 +59,7 @@ public abstract class PluginBootstrap extends JavaPlugin {
 
     public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, InputStream inputStream, File downloadDir,
                            boolean keepExisting, boolean stopOnError) {
-        this(enderPlugin);
+        this();
         this.injector.download(inputStream, downloadDir, keepExisting);
         this.injector.inject(downloadDir, stopOnError);
         this.loadPlugin(enderPlugin);
