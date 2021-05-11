@@ -114,7 +114,7 @@ public class StrFmt {
      */
     public StrFmt(String input, Level level, Status status) {
         this.rawString = input;
-        this.outputString = input;
+        this.outputString = input + "§r";           // Prevent "color spill"
         this.level = level;
         this.status = status;
     }
@@ -204,7 +204,7 @@ public class StrFmt {
             case WARN: levelStr     = "§e§lWARN§R"; break;
             case ERROR: levelStr    = "§c§lERROR§R"; break;
             case FATAL: levelStr    = "§4§lFATAL§R"; break;
-            default: levelStr       = ""; break;
+            default: levelStr       = "§r"; break;
         }
 
         return replaceAll("\\{level}", levelStr);
@@ -222,7 +222,7 @@ public class StrFmt {
             case PROGRESS: statusChar   = "§b§l...§R"; break;
             case GOOD: statusChar       = "§a§l✔§R"; break;
             case BAD: statusChar        = "§c§l✘§R"; break;
-            default: statusChar         = ""; break;
+            default: statusChar         = "§r"; break;
         }
 
         return replaceAll("\\{status}", statusChar);
