@@ -1,18 +1,14 @@
 package com.endersuite.libcore.inject.impl;
 
-import java.io.BufferedReader;
+import com.endersuite.libcore.strfmt.Level;
+import com.endersuite.libcore.strfmt.StrFmt;
+
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,23 +19,27 @@ import java.util.Locale;
 public class LegacyClassPathInjector implements Injector {
 
     public LegacyClassPathInjector() {
-        if (!(ClassLoader.getSystemClassLoader() instanceof URLClassLoader)) {
+        if (!(ClassLoader.getSystemClassLoader() instanceof URLClassLoader))
             throw new IllegalStateException("System class loader is no URLClassLoader");
-        }
     }
 
     @Override
-    public boolean inject(File target, boolean stopOnError) {
-        File[] files = target.listFiles();
+    public boolean inject(File depsFolder, boolean stopOnError) {
+        File[] files = depsFolder.listFiles();
         if (files == null) {
-            System.err.println("No file for injection found!");
+            System.err.println("Cannot inject null depsFolder!");
             return false;
         }
+
         for (File file : files) {
             if (!file.getAbsolutePath().toLowerCase(Locale.ROOT).endsWith(".jar")) {
-                System.err.println("The file '" + file.getAbsolutePath() + "' is not a jar file!");
+                new StrFmt("{prefix} File in deps folder '§e" + file.getName() + "§r' is no jar file! Skipping it!")
+                        .setLevel(Level.WARN).toConsole();
                 continue;
             }
+
+            new StrFmt("{prefix} Injecting '§e" + file.getName() + "§r'").setLevel(Level.DEBUG).toConsole();
+
             try {
                 URL url = file.toURI().toURL();
                 ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -49,14 +49,16 @@ public class LegacyClassPathInjector implements Injector {
                     method.setAccessible(true);
                     method.invoke(classLoader, url);
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    System.err.println("Error while injecting '" + file.getAbsolutePath() + "'");
+                    new StrFmt("{prefix} Could not inject '§e" + file.getName() + "§r': §c" + e.getMessage())
+                            .setLevel(Level.ERROR).toConsole();
                     if (stopOnError) {
                         e.printStackTrace();
                         return false;
                     }
                 }
             } catch (MalformedURLException e) {
-                System.err.println("Could not inject all needed libraries");
+                new StrFmt("{prefix} Could not inject successfully! " + e.getMessage())
+                        .setLevel(Level.ERROR).toConsole();
                 if (!stopOnError) {
                     e.printStackTrace();
                     return false;

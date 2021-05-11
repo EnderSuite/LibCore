@@ -1,5 +1,8 @@
 package com.endersuite.libcore.inject.impl;
 
+import com.endersuite.libcore.strfmt.Level;
+import com.endersuite.libcore.strfmt.StrFmt;
+
 import java.io.File;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -30,17 +33,22 @@ public class ClassPathInjector implements Injector {
     }
 
     @Override
-    public boolean inject(File target, boolean stopOnError) {
-        File[] files = target.listFiles();
+    public boolean inject(File depsFolder, boolean stopOnError) {
+        File[] files = depsFolder.listFiles();
         if (files == null) {
-            System.err.println("No file for injection found!");
+            System.err.println("Cannot inject null depsFolder!");
             return false;
         }
+
         for (File file : files) {
             if (!file.getAbsolutePath().toLowerCase(Locale.ROOT).endsWith(".jar")) {
-                System.err.println("The file '" + file.getAbsolutePath() + "' is not a jar file!");
+                new StrFmt("{prefix} File in deps folder '§e" + file.getName() + "§r' is no jar file! Skipping it!")
+                        .setLevel(Level.WARN).toConsole();
                 continue;
             }
+
+            new StrFmt("{prefix} Injecting '§e" + file.getName() + "§r'").setLevel(Level.DEBUG).toConsole();
+
             try {
                 ClassLoader classLoader = ClassLoader.getSystemClassLoader();
                 Field field = classLoader.getClass().getDeclaredField("ucp");
@@ -52,7 +60,8 @@ public class ClassPathInjector implements Injector {
                 addFile.invoke(urlClassPathObject, file.getAbsolutePath());
             } catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException |
                     IllegalAccessException | ClassNotFoundException e) {
-                System.err.println("Error while injecting '" + file.getAbsolutePath() + "'");
+                new StrFmt("{prefix} Could not inject '§e" + file.getName() + "§r': §c" + e.getMessage())
+                        .setLevel(Level.ERROR).toConsole();
                 System.err.println(e);
                 if (stopOnError) {
                     e.printStackTrace();
