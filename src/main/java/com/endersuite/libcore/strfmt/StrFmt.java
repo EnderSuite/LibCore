@@ -54,6 +54,11 @@ public class StrFmt {
     private String outputString;
 
     /**
+     * A throwable who's stacktrace will be printed to console if not null.
+     */
+    private Throwable outputThrowable;
+
+    /**
      * The status which can be displayed inside strings using the {status} placeholder.
      */
     @Getter
@@ -76,6 +81,20 @@ public class StrFmt {
      */
     public StrFmt(String input) {
         this(input, Level.INFO, Status.HIDDEN);
+    }
+
+    /**
+     * Creates a new string formatter using the default level (INFO) and status (HIDDEN) with a throwable
+     * who's stacktrace will be printed to the console when calling {@link StrFmt#toConsole()}.
+     *
+     * @param input
+     *          The raw input string
+     * @param throwable
+     *          The throwable to output
+     */
+    public StrFmt(String input, Throwable throwable) {
+        this(input, Level.INFO, Status.HIDDEN);
+        this.outputThrowable = throwable;
     }
 
     /**
@@ -275,6 +294,9 @@ public class StrFmt {
 
         // RET: Log level to low!
         if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
+
+        if (outputThrowable != null)
+            outputThrowable.printStackTrace();
 
         Bukkit.getLogger().info(AnsiColor.convert(this.toString()));
         return this;
