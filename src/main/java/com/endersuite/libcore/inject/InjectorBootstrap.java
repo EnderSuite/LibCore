@@ -29,13 +29,13 @@ public class InjectorBootstrap {
             }
         }
         if (found == null) {
-            new StrFmt("{prefix} Java version §c" + System.getProperty("java.version") + "§r is not supported!").setLevel(Level.FATAL).toConsole();
+            new StrFmt("{prefix} Java version §c" + System.getProperty("java.version") + "§r is not supported!").setLevel(Level.FATAL).toLog();
             throw new RuntimeException("Running currently unsupported java version '" + version + "'");
         }
-        new StrFmt("{prefix} Java version §a" + System.getProperty("java.version") + "§r is supported!").setLevel(Level.INFO).toConsole();
+        new StrFmt("{prefix} Java version §a" + System.getProperty("java.version") + "§r is supported!").setLevel(Level.INFO).toLog();
         if (found.isUnsafe()) {
             new StrFmt("{prefix} Java version '§e" + found.getVersion() + "§r' is not recommended! Bugs my occur! Please use a version between §e8§r - §e11§r!")
-                    .setLevel(Level.WARN).toConsole();
+                    .setLevel(Level.WARN).toLog();
         }
         this.injector = found.equals(JavaVersion.JAVA_8) ? new LegacyClassPathInjector() : new ClassPathInjector();
     }

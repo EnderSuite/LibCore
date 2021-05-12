@@ -107,7 +107,7 @@ public class Downloader {
 
                 if (targetFile.exists() && !override) {
                     new StrFmt("{prefix} Remote dependency '§e" + urlStr + "§r' already downloaded to '§e" + targetFile.getAbsolutePath() + "§r'! Skipping it!")
-                            .setLevel(Level.DEBUG).toConsole();
+                            .setLevel(Level.DEBUG).toLog();
                     continue;
                 }
 
@@ -116,12 +116,12 @@ public class Downloader {
                 connection.setRequestMethod("HEAD");
                 if (!connection.getHeaderField("Content-Type").equals("application/java-archive")) {
                     new StrFmt("{prefix} Dependency source at '§e" + urlStr + "§r' is no java-archive! Skipping it!")
-                            .setLevel(Level.WARN).toConsole();
+                            .setLevel(Level.WARN).toLog();
                     continue;
                 }
 
                 // Perform download
-                new StrFmt("{prefix} Pulling remote dependency '§e" + urlStr + "§r'").setLevel(Level.DEBUG).toConsole();
+                new StrFmt("{prefix} Pulling remote dependency '§e" + urlStr + "§r'").setLevel(Level.DEBUG).toLog();
                 Files.copy(url.openStream(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {

@@ -175,7 +175,7 @@ public class ConfigManager {
                             loaded.getConfigVersion(),
                             configuration.getConfigVersion()
                         ))
-                        .setLevel(Level.DEBUG).toConsole();
+                        .setLevel(Level.DEBUG).toLog();
                 configuration = this.updateJson(clazz, configFile);
             }
 

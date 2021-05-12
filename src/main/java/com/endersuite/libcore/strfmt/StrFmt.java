@@ -7,6 +7,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * Utility for constructing beautiful strings and sending them to the Bukkit console / players.
@@ -26,6 +27,11 @@ import java.util.Collection;
 public class StrFmt {
 
     // ======================   VARS
+
+    /**
+     * Global logger to use. This makes it possible for Bukkit & Non-Bukkit projects to use this class.
+     */
+    public static Logger logger;
 
     /**
      * Global prefix used in every StrFmt instance. Should be set at plugin start!
@@ -85,7 +91,7 @@ public class StrFmt {
 
     /**
      * Creates a new string formatter using the default level (INFO) and status (HIDDEN) with a throwable
-     * who's stacktrace will be printed to the console when calling {@link StrFmt#toConsole()}.
+     * who's stacktrace will be printed to the console when calling {@link StrFmt#toLog()}.
      *
      * @param input
      *          The raw input string
@@ -286,11 +292,28 @@ public class StrFmt {
     // ======================   OUTPUT HELPERS
 
     /**
-     * Outputs the formatted string to console.
+     * Outputs the colored formatted string to configured logger.
      *
      * @return StrFmt instance for chaining possibility
      */
-    public StrFmt toConsole() {
+    public StrFmt toLog() {
+        return toLog(true);
+    }
+
+    /**
+     * Outputs the formatted string to the logger.
+     *
+     * @param color
+     *          Whether to convert bukkit color codes to Ansi colors
+     * @return StrFmt instance for chaining possibility
+     */
+    public StrFmt toLog(boolean color) {
+
+        // RET: No logger specified!
+        if (StrFmt.logger == null) {
+            System.out.println("No logger set for StrFmt!");
+            return this;
+        }
 
         // RET: Log level to low!
         if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
@@ -298,7 +321,8 @@ public class StrFmt {
         if (outputThrowable != null)
             outputThrowable.printStackTrace();
 
-        Bukkit.getLogger().info(AnsiColor.convert(this.toString()));
+        String output = color ? AnsiColor.convert(this.toString()) : this.toString();
+        StrFmt.logger.info(output);
         return this;
 
     }
