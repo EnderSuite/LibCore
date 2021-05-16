@@ -37,10 +37,15 @@ public class SerializedItem implements Serializable {
             try {
                 String packageName = Bukkit.getServer().getClass().getPackage().getName();
                 String version = packageName.substring(packageName.lastIndexOf(".") + 1);
-                Class<?> craftMeta = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftMetaItem.SerializableMeta");
-                Method method = craftMeta.getMethod("deserialize", Map.class);
-                Object meta = method.invoke(null, this.materialAttributes.get("meta"));
-                itemStack.setItemMeta((ItemMeta) meta);
+                /*Class<?> craftItem = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftItemStack");
+                Method asCraftCopy = craftItem.getMethod("asCraftCopy", ItemStack.class);
+                Object craftItemStackObject = asCraftCopy.invoke(null, itemStack);
+                Method getItemMeta = craftItem.getDeclaredMethod("getItemMeta");
+                Object craftItemMeta = getItemMeta.invoke(craftItemStackObject);*/
+                Class<?> craftMetaItemClass = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.$CraftMetaItem.SerializableMeta");
+                Method deserialize = craftMetaItemClass.getMethod("deserialize", Map.class);
+                final Object invoke = deserialize.invoke(null, this.materialAttributes);
+                itemStack.setItemMeta((ItemMeta) invoke);
             } catch (Exception e) {
                 e.printStackTrace();
             }
