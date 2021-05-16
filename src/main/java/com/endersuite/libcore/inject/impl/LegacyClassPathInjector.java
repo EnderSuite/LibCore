@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Provides functionality to inject dependencies into the class path & a downloads them
+ * Provides functionality to inject dependencies into the class path and a downloads them
  * from a specified URL list if tey are not already present locally
  *
  * @author TheRealDomm

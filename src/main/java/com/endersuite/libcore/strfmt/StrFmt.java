@@ -29,7 +29,7 @@ public class StrFmt {
     // ======================   VARS
 
     /**
-     * Global logger to use. This makes it possible for Bukkit & Non-Bukkit projects to use this class.
+    * Global logger to use. This makes it possible for Bukkit and Non-Bukkit projects to use this class.
      */
     public static Logger logger;
 
@@ -128,7 +128,7 @@ public class StrFmt {
     }
 
     /**
-     * Creates a new string formatter using the provided level & status.
+     * Creates a new string formatter using the provided level and status.
      *
      * @param input
      *          The raw input string
@@ -178,8 +178,8 @@ public class StrFmt {
     // ======================   JAVA INTERNAL
 
     /**
-     * Builds & Returns the formatted output string.
-     * Note: prefix, level, status & color code formatters are applied by default!
+     * Builds and returns the formatted output string.
+     * Note: prefix, level, status and color code formatters are applied by default!
      *
      * @return
      *          The formatted string
@@ -197,7 +197,7 @@ public class StrFmt {
     // ======================   BUSINESS LOGIC
 
     /**
-     * Changes all & chars into §.
+     * Changes all {@code &} chars into {@code §}.
      *
      * @return StrFmt instance for chaining possibility
      */
@@ -256,8 +256,8 @@ public class StrFmt {
 
     /**
      * Inserts:
-     *          player->displayname     at {player.dName}
-     *          player->name            at {player.name}
+     *          player.displayName     at {player.dName}
+     *          player.name            at {player.name}
      *
      * @param player
      *          The player used as data source

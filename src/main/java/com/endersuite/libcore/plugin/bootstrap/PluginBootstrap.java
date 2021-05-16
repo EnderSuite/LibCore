@@ -98,12 +98,10 @@ public abstract class PluginBootstrap extends JavaPlugin {
 
     // ======================   HELPERS
 
-    /*public static EnderPlugin getPlugin() {
-        return PluginBootstrap.enderPlugin;
-    }*/
-
     /**
      * Panics (Disables) the plugin. Should be used in case of a fatal exception!
+     *
+     * @param message
      */
     public void panic(String message) {
         this.panic = true;
@@ -112,7 +110,10 @@ public abstract class PluginBootstrap extends JavaPlugin {
     }
 
     /**
-     * Panics (Disables) the plugin & Prints stacktrace. Should be used in case of a fatal exception!
+     * Panics (Disables) the plugin and prints stacktrace. Should be used in case of a fatal exception!
+     *
+     * @param message
+     * @param throwable
      */
     public void panic(String message, Throwable throwable) {
         throwable.printStackTrace();

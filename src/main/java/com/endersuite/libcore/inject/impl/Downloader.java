@@ -29,8 +29,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(InputStream urlTextStream, Path targetFolder, boolean override) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(urlTextStream));
@@ -55,8 +53,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(File urlFile, Path targetFolder, boolean override) {
         List<String> urls = new ArrayList<>();
@@ -81,8 +77,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(List<String> urls, Path targetFolder, boolean override) {
         File target = targetFolder.toFile();
