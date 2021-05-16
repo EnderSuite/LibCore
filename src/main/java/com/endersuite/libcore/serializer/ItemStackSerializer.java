@@ -38,6 +38,10 @@ public class ItemStackSerializer implements Serializable {
             if (inventory.getItem(i) != null && !inventory.getItem(i).getType().equals(Material.AIR)) {
                 ItemStack itemStack = inventory.getItem(i);
                 serializedItems.add(getSerializedItem(i, itemStack));
+            } else {
+                SerializedItem serializedItem = new SerializedItem();
+                serializedItem.setEmptySlot(true);
+                serializedItems.add(serializedItem);
             }
         }
         return serialize(serializedItems);
@@ -47,7 +51,7 @@ public class ItemStackSerializer implements Serializable {
         return GSON.toJson(serializedItems);
     }
 
-    public static List<SerializedItem> deserializeInventory(String serialized) {
+    public static List<SerializedItem> deserialize(String serialized) {
         try {
             Type items = new TypeToken<List<SerializedItem>>(){}.getType();
             return GSON.fromJson(serialized, items);

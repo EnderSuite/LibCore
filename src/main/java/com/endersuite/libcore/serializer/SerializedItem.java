@@ -22,6 +22,7 @@ public class SerializedItem implements Serializable {
     private String displayName;
     private int amount;
     private int slot;
+    private boolean emptySlot;
     private Map<String, Object> materialAttributes;
 
     public ItemStack toItemStack() {
