@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Provides functionality to inject dependencies into the class path & a downloads them
+ * Provides functionality to inject dependencies into the class path and a downloads them
  * from a specified URL list if tey are not already present locally
  *
  * @author TheRealDomm
@@ -43,18 +43,18 @@ public class ClassPathInjector implements Injector {
 
         File[] files = target.listFiles();
         if (files == null) {
-            new StrFmt("{prefix} Tried to inject but found no dependencies to inject!").setLevel(Level.WARN).toConsole();
+            new StrFmt("{prefix} Tried to inject but found no dependencies to inject!").setLevel(Level.WARN).toLog();
             return;
         }
 
         for (File file : files) {
             if (!file.getAbsolutePath().toLowerCase(Locale.ROOT).endsWith(".jar")) {
                 new StrFmt("{prefix} File in deps folder '§e" + file.getName() + "§r' is no jar file! Skipping it!")
-                        .setLevel(Level.WARN).toConsole();
+                        .setLevel(Level.WARN).toLog();
                 continue;
             }
 
-            new StrFmt("{prefix} Injecting '§e" + file.getName() + "§r'").setLevel(Level.DEBUG).toConsole();
+            new StrFmt("{prefix} Injecting '§e" + file.getName() + "§r'").setLevel(Level.DEBUG).toLog();
 
             try {
                 ClassLoader classLoader = ClassLoader.getSystemClassLoader();

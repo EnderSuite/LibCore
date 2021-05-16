@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides loading & storing functionality together with a singleton to be used throughout the project.
- * Upon loading a config that does not exist, it tries to save a resource file with matching name.
+ * Provides loading and storing functionality together with a singleton to be used throughout the project.
+ * Upon loading config that does not exist, it tries to save a resource file with matching name.
  *
  * @author Maximilian Vincent Heidenreich, TheRealDomm
  * @since 08.05.21
@@ -29,11 +29,6 @@ import java.util.Map;
 public class ConfigManager {
 
     // ======================   VARS
-
-    /**
-     * The ConfigManager singleton.
-     */
-    private static ConfigManager instance;
 
     /**
      * The {@link Gson} instance used for (de)serialization.
@@ -57,7 +52,6 @@ public class ConfigManager {
 
     /**
      * Creates a new ConfigManager instance.
-     * ! Note: You should probably be using {@link ConfigManager#getInstance()} !
      */
     public ConfigManager() {
         this.loadedFileConfigurations = new HashMap<>();
@@ -125,6 +119,7 @@ public class ConfigManager {
      *          The path to the configuration file
      * @param plugin
      *          The {@link Plugin} used for resource extraction
+     * @throws IOException
      */
     public void load(String name, Path path, Plugin plugin) throws IOException {
 
@@ -175,7 +170,7 @@ public class ConfigManager {
                             loaded.getConfigVersion(),
                             configuration.getConfigVersion()
                         ))
-                        .setLevel(Level.DEBUG).toConsole();
+                        .setLevel(Level.DEBUG).toLog();
                 configuration = this.updateJson(clazz, configFile);
             }
 
@@ -210,24 +205,6 @@ public class ConfigManager {
      */
     public <T extends IConfiguration> T getJson(String name) {
         return (T) getLoadedJsonConfigurations().get(name);
-    }
-
-
-    // ======================   GETTER & SETTER
-
-    /**
-     * Returns the ConfigManager singleton instance.
-     * Note: Also creates one if none exists.
-     *
-     * @return The ConfigManager instance.
-     */
-    public static ConfigManager getInstance() {
-        ConfigManager configManager = new ConfigManager();
-
-        if (ConfigManager.instance == null)
-            ConfigManager.instance = configManager;
-
-        return ConfigManager.instance;
     }
 
 }

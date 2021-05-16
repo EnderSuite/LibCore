@@ -7,6 +7,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * Utility for constructing beautiful strings and sending them to the Bukkit console / players.
@@ -26,6 +27,11 @@ import java.util.Collection;
 public class StrFmt {
 
     // ======================   VARS
+
+    /**
+    * Global logger to use. This makes it possible for Bukkit and Non-Bukkit projects to use this class.
+     */
+    public static Logger logger;
 
     /**
      * Global prefix used in every StrFmt instance. Should be set at plugin start!
@@ -54,6 +60,11 @@ public class StrFmt {
     private String outputString;
 
     /**
+     * A throwable who's stacktrace will be printed to console if not null.
+     */
+    private Throwable outputThrowable;
+
+    /**
      * The status which can be displayed inside strings using the {status} placeholder.
      */
     @Getter
@@ -76,6 +87,20 @@ public class StrFmt {
      */
     public StrFmt(String input) {
         this(input, Level.INFO, Status.HIDDEN);
+    }
+
+    /**
+     * Creates a new string formatter using the default level (INFO) and status (HIDDEN) with a throwable
+     * who's stacktrace will be printed to the console when calling {@link StrFmt#toLog()}.
+     *
+     * @param input
+     *          The raw input string
+     * @param throwable
+     *          The throwable to output
+     */
+    public StrFmt(String input, Throwable throwable) {
+        this(input, Level.INFO, Status.HIDDEN);
+        this.outputThrowable = throwable;
     }
 
     /**
@@ -103,7 +128,7 @@ public class StrFmt {
     }
 
     /**
-     * Creates a new string formatter using the provided level & status.
+     * Creates a new string formatter using the provided level and status.
      *
      * @param input
      *          The raw input string
@@ -153,8 +178,8 @@ public class StrFmt {
     // ======================   JAVA INTERNAL
 
     /**
-     * Builds & Returns the formatted output string.
-     * Note: prefix, level, status & color code formatters are applied by default!
+     * Builds and returns the formatted output string.
+     * Note: prefix, level, status and color code formatters are applied by default!
      *
      * @return
      *          The formatted string
@@ -172,7 +197,7 @@ public class StrFmt {
     // ======================   BUSINESS LOGIC
 
     /**
-     * Changes all & chars into §.
+     * Changes all {@code &} chars into {@code §}.
      *
      * @return StrFmt instance for chaining possibility
      */
@@ -231,8 +256,8 @@ public class StrFmt {
 
     /**
      * Inserts:
-     *          player->displayname     at {player.dName}
-     *          player->name            at {player.name}
+     *          player.displayName     at {player.dName}
+     *          player.name            at {player.name}
      *
      * @param player
      *          The player used as data source
@@ -267,16 +292,37 @@ public class StrFmt {
     // ======================   OUTPUT HELPERS
 
     /**
-     * Outputs the formatted string to console.
+     * Outputs the colored formatted string to configured logger.
      *
      * @return StrFmt instance for chaining possibility
      */
-    public StrFmt toConsole() {
+    public StrFmt toLog() {
+        return toLog(true);
+    }
+
+    /**
+     * Outputs the formatted string to the logger.
+     *
+     * @param color
+     *          Whether to convert bukkit color codes to Ansi colors
+     * @return StrFmt instance for chaining possibility
+     */
+    public StrFmt toLog(boolean color) {
+
+        // RET: No logger specified!
+        if (StrFmt.logger == null) {
+            System.out.println("No logger set for StrFmt!");
+            return this;
+        }
 
         // RET: Log level to low!
         if (getLevel().toInt() < StrFmt.outputLevel.toInt()) return this;
 
-        Bukkit.getLogger().info(AnsiColor.convert(this.toString()));
+        if (outputThrowable != null)
+            outputThrowable.printStackTrace();
+
+        String output = color ? AnsiColor.convert(this.toString()) : this.toString();
+        StrFmt.logger.info(output);
         return this;
 
     }

@@ -16,8 +16,6 @@ public interface Injector {
      *
      * @param depsFolder
      *          The folder containing the jar files
-     * @return
-     *          {@code true} if all files were injected successfully | {@code false} if not
      */
     void inject(Path depsFolder);
 
@@ -30,8 +28,6 @@ public interface Injector {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     void download(InputStream urlTextStream, Path targetFolder, boolean override);
 
@@ -44,8 +40,6 @@ public interface Injector {
      *          THe folder in which to save the downloaded files
      * @param override
      *          Whether to overwrite existing files
-     * @return
-     *          {@code true} if everything succeeded | {@code false} if there was an exception
      */
     void download(File urlFile, Path targetFolder, boolean override);
 
@@ -58,8 +52,6 @@ public interface Injector {
      *          THe folder in which to save the downloaded files
      * @param override
      *          Whether to overwrite existing files
-     * @return
-     *          {@code true} if everything succeeded | {@code false} if there was an exception
      */
     void download(List<String> urls, Path targetFolder, boolean override);
 

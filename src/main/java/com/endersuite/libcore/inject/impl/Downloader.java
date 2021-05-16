@@ -29,8 +29,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(InputStream urlTextStream, Path targetFolder, boolean override) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(urlTextStream));
@@ -55,8 +53,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(File urlFile, Path targetFolder, boolean override) {
         List<String> urls = new ArrayList<>();
@@ -81,8 +77,6 @@ public class Downloader {
      *          The folder inside which the downloaded files will be saved
      * @param override
      *          Whether to override existing files
-     * @return
-     *          {@code true} if everything was downloaded | {@code false} if not
      */
     public static void download(List<String> urls, Path targetFolder, boolean override) {
         File target = targetFolder.toFile();
@@ -107,7 +101,7 @@ public class Downloader {
 
                 if (targetFile.exists() && !override) {
                     new StrFmt("{prefix} Remote dependency '§e" + urlStr + "§r' already downloaded to '§e" + targetFile.getAbsolutePath() + "§r'! Skipping it!")
-                            .setLevel(Level.DEBUG).toConsole();
+                            .setLevel(Level.DEBUG).toLog();
                     continue;
                 }
 
@@ -116,12 +110,12 @@ public class Downloader {
                 connection.setRequestMethod("HEAD");
                 if (!connection.getHeaderField("Content-Type").equals("application/java-archive")) {
                     new StrFmt("{prefix} Dependency source at '§e" + urlStr + "§r' is no java-archive! Skipping it!")
-                            .setLevel(Level.WARN).toConsole();
+                            .setLevel(Level.WARN).toLog();
                     continue;
                 }
 
                 // Perform download
-                new StrFmt("{prefix} Pulling remote dependency '§e" + urlStr + "§r'").setLevel(Level.DEBUG).toConsole();
+                new StrFmt("{prefix} Pulling remote dependency '§e" + urlStr + "§r'").setLevel(Level.DEBUG).toLog();
                 Files.copy(url.openStream(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {

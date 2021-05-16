@@ -44,6 +44,7 @@ public abstract class PluginBootstrap extends JavaPlugin {
      *          A prefix to be used by the {@link StrFmt} class (Can be used to visually separate log output)
      */
     public PluginBootstrap(Class<? extends EnderPlugin> enderPlugin, String prefix) {
+        StrFmt.logger = Bukkit.getLogger();
         StrFmt.prefix = prefix;
         final InjectorBootstrap injectorBootstrap = new InjectorBootstrap();
         this.injector = injectorBootstrap.getInjector();
@@ -97,21 +98,22 @@ public abstract class PluginBootstrap extends JavaPlugin {
 
     // ======================   HELPERS
 
-    /*public static EnderPlugin getPlugin() {
-        return PluginBootstrap.enderPlugin;
-    }*/
-
     /**
      * Panics (Disables) the plugin. Should be used in case of a fatal exception!
+     *
+     * @param message
      */
     public void panic(String message) {
         this.panic = true;
-        new StrFmt("{prefix} §4Panic§r: " + message + "! (ノಠ益ಠ)ノ彡┻━┻").setLevel(Level.FATAL).toConsole();
+        new StrFmt("{prefix} §4Panic§r: " + message + "! (ノಠ益ಠ)ノ彡┻━┻").setLevel(Level.FATAL).toLog();
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
     /**
-     * Panics (Disables) the plugin & Prints stacktrace. Should be used in case of a fatal exception!
+     * Panics (Disables) the plugin and prints stacktrace. Should be used in case of a fatal exception!
+     *
+     * @param message
+     * @param throwable
      */
     public void panic(String message, Throwable throwable) {
         throwable.printStackTrace();
