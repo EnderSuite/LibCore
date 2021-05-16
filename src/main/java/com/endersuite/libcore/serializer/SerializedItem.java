@@ -1,8 +1,10 @@
 package com.endersuite.libcore.serializer;
 
+import com.endersuite.libcore.strfmt.StrFmt;
 import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -22,11 +24,16 @@ public class SerializedItem implements Serializable {
     private String displayName;
     private int amount;
     private int slot;
-    private boolean emptySlot;
+    private boolean emptySlot = false;
     private Map<String, Object> materialAttributes;
 
     public ItemStack toItemStack() {
-        return ItemStack.deserialize(this.materialAttributes);
+        new StrFmt(materialAttributes.toString()).toLog();
+        ItemStack itemStack = ItemStack.deserialize(this.materialAttributes);
+        /*if (materialAttributes.containsKey("meta")) {
+            itemStack.setItemMeta((ItemMeta) materialAttributes.get("meta"));
+        }*/
+        return itemStack;
     }
 
     public boolean isCompatible() {

@@ -17,12 +17,7 @@ import java.util.List;
  * @author TheRealDomm
  * @since 15.05.2021
  */
-@Data
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-public class ItemStackSerializer implements Serializable {
+public class ItemStackSerializer {
 
     private static final Gson GSON = new GsonBuilder().create();
 
@@ -41,6 +36,7 @@ public class ItemStackSerializer implements Serializable {
             } else {
                 SerializedItem serializedItem = new SerializedItem();
                 serializedItem.setEmptySlot(true);
+                serializedItem.setSlot(i);
                 serializedItems.add(serializedItem);
             }
         }
@@ -68,6 +64,7 @@ public class ItemStackSerializer implements Serializable {
         serializer.setAmount(itemStack.getAmount());
         serializer.setSlot(slot);
         serializer.setMaterialAttributes(itemStack.serialize());
+        System.out.println(serializer.getMaterialAttributes());
         return serializer;
     }
 
