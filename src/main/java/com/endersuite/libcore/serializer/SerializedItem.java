@@ -37,6 +37,12 @@ public class SerializedItem implements Serializable {
             try {
                 String packageName = Bukkit.getServer().getClass().getPackage().getName();
                 String version = packageName.substring(packageName.lastIndexOf(".") + 1);
+                try {
+                    Class.forName("org.bukkit.craftbukkit." + version + ".inventory.SerializableMeta");
+                    System.out.println("Yep, worked :)");
+                } catch (Exception e) {
+                    System.out.println("Not found :(");
+                }
                 /*Class<?> craftItem = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftItemStack");
                 Method asCraftCopy = craftItem.getMethod("asCraftCopy", ItemStack.class);
                 Object craftItemStackObject = asCraftCopy.invoke(null, itemStack);
