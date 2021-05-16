@@ -45,12 +45,12 @@
         <snapshotRepository>
             <id>endersuite</id>
             <name>endersuite-dev-snapshots</name>
-            <url>http://artifactory.endersuite.com/artifactory/endersuite-snapshot</url>
+            <url>https://artifactory.endersuite.com/artifactory/endersuite-snapshot</url>
         </snapshotRepository>
         <repository>
             <id>endersuite</id>
             <name>endersuite-dev-releases</name>
-            <url>http://artifactory.endersuite.com/artifactory/endersuite-stable</url>
+            <url>https://artifactory.endersuite.com/artifactory/endersuite-stable</url>
         </repository>
     </distributionManagement>
 
